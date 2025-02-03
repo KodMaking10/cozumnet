@@ -11,27 +11,51 @@
             background-color: #f4f4f4;
             margin: 0;
             padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
         }
+
+        body.dark-mode {
+            background-color: #121212;
+            color: #ddd;
+        }
+
         h1 {
             color: #333;
+            animation: fadeIn 1.5s ease-in;
         }
+
+        body.dark-mode h1 {
+            color: #fff;
+        }
+
         .search-container {
             margin-bottom: 20px;
+            animation: fadeIn 2s ease-in;
         }
+
         .search-box {
             width: 80%;
             max-width: 400px;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            transition: transform 0.3s ease-in-out;
         }
+
+        .search-box:focus {
+            transform: scale(1.05);
+            border-color: #007BFF;
+        }
+
         .container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 10px;
             max-width: 900px;
             margin: auto;
+            animation: fadeIn 2.5s ease-in;
         }
+
         .button {
             background-color: #007BFF;
             color: white;
@@ -41,12 +65,128 @@
             text-align: center;
             display: block;
             transition: 0.3s;
+            transform: scale(1);
         }
+
         .button:hover {
             background-color: #0056b3;
+            transform: scale(1.1);
         }
+
+        /* Tema geçiş slide bar */
+        .theme-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            animation: fadeIn 2.5s ease-in;
+        }
+
+        .theme-toggle input[type="checkbox"] {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            appearance: none;
+            background-color: #ccc;
+            border-radius: 50px;
+            transition: background-color 0.3s;
+        }
+
+        .theme-toggle input[type="checkbox"]:checked {
+            background-color: #007BFF;
+        }
+
+        .theme-toggle input[type="checkbox"]:before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .theme-toggle input[type="checkbox"]:checked:before {
+            transform: translateX(26px);
+        }
+
+        /* Butonlar koyu temaya uyumlu hale getirildi */
+        .button.dark-mode-btn {
+            background-color: #333;
+            color: #ddd;
+        }
+
+        .button.dark-mode-btn:hover {
+            background-color: #555;
+        }
+
+        /* Yükleniyor animasyonu ve geçiş */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+        }
+
+        .loading-message {
+            font-size: 24px;
+            margin-right: 20px;
+            animation: fadeIn 1.5s ease-in;
+        }
+
+        .loading-spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #007BFF;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        /* Butonların içerikleri */
+        .button-content {
+            display: block;
+        }
+
     </style>
     <script>
+        // Tema geçiş fonksiyonu
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const buttons = document.querySelectorAll('.button');
+            buttons.forEach(button => {
+                button.classList.toggle('dark-mode-btn');
+            });
+
+            // Temaya göre ikon değişimi
+            const themeIcon = document.getElementById('theme-icon');
+            if (document.body.classList.contains('dark-mode')) {
+                themeIcon.textContent = '🌙';  // Gece simgesi
+            } else {
+                themeIcon.textContent = '🌞';  // Gündüz simgesi
+            }
+        }
+
+        // Yayınevlerini arama fonksiyonu
         function searchPublishers() {
             let input = document.getElementById('searchBox').value.toLowerCase();
             let buttons = document.querySelectorAll('.button');
@@ -58,65 +198,75 @@
                 }
             });
         }
+
+        // Yükleniyor ekranını kaldırma
+        window.onload = function() {
+            setTimeout(function() {
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            }, 1500);  // 2.5 saniye sonra geçiş
+        }
     </script>
 </head>
 <body>
-    <h1>ÇözümNet - Tüm Ders Yayınevleri Tek Yerde</h1>
-    <div class="search-container">
-        <input type="text" id="searchBox" class="search-box" onkeyup="searchPublishers()" placeholder="Yayınevi ara...">
+    <!-- Yükleniyor Ekranı -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-message">Bir saniye, yükleniyor...</div>
+        <div class="loading-spinner"></div>
     </div>
-    <div class="container">
-        <a href="" class="button">Yayınevi 1</a>
-        <a href="" class="button">Yayınevi 2</a>
-        <a href="" class="button">Yayınevi 3</a>
-        <a href="" class="button">Yayınevi 4</a>
-        <a href="" class="button">Yayınevi 5</a>
-        <a href="" class="button">Yayınevi 6</a>
-        <a href="" class="button">Yayınevi 7</a>
-        <a href="" class="button">Yayınevi 8</a>
-        <a href="" class="button">Yayınevi 9</a>
-        <a href="" class="button">Yayınevi 10</a>
-        <a href="" class="button">Yayınevi 11</a>
-        <a href="" class="button">Yayınevi 12</a>
-        <a href="" class="button">Yayınevi 13</a>
-        <a href="" class="button">Yayınevi 14</a>
-        <a href="" class="button">Yayınevi 15</a>
-        <a href="" class="button">Yayınevi 16</a>
-        <a href="" class="button">Yayınevi 17</a>
-        <a href="" class="button">Yayınevi 18</a>
-        <a href="" class="button">Yayınevi 19</a>
-        <a href="" class="button">Yayınevi 20</a>
-        <a href="" class="button">Yayınevi 21</a>
-        <a href="" class="button">Yayınevi 22</a>
-        <a href="" class="button">Yayınevi 23</a>
-        <a href="" class="button">Yayınevi 24</a>
-        <a href="" class="button">Yayınevi 25</a>
-        <a href="" class="button">Yayınevi 26</a>
-        <a href="" class="button">Yayınevi 27</a>
-        <a href="" class="button">Yayınevi 28</a>
-        <a href="" class="button">Yayınevi 29</a>
-        <a href="" class="button">Yayınevi 30</a>
-        <a href="" class="button">Yayınevi 31</a>
-        <a href="" class="button">Yayınevi 32</a>
-        <a href="" class="button">Yayınevi 33</a>
-        <a href="" class="button">Yayınevi 34</a>
-        <a href="" class="button">Yayınevi 35</a>
-        <a href="" class="button">Yayınevi 36</a>
-        <a href="" class="button">Yayınevi 37</a>
-        <a href="" class="button">Yayınevi 38</a>
-        <a href="" class="button">Yayınevi 39</a>
-        <a href="" class="button">Yayınevi 40</a>
-        <a href="" class="button">Yayınevi 41</a>
-        <a href="" class="button">Yayınevi 42</a>
-        <a href="" class="button">Yayınevi 43</a>
-        <a href="" class="button">Yayınevi 44</a>
-        <a href="" class="button">Yayınevi 45</a>
-        <a href="" class="button">Yayınevi 46</a>
-        <a href="" class="button">Yayınevi 47</a>
-        <a href="" class="button">Yayınevi 48</a>
-        <a href="" class="button">Yayınevi 49</a>
-        <a href="" class="button">Yayınevi 50</a>
-        <!-- 50 tane daha buton eklenecek -->
+
+    <!-- Ana İçerik -->
+    <div id="main-content" style="display: none;">
+        <div class="theme-toggle-container">
+            <label class="theme-toggle">
+                <input type="checkbox" onchange="toggleTheme()">
+                <span id="theme-icon">🌞</span>  <!-- Günışığı simgesi -->
+            </label>
+        </div>
+
+        <h1>ÇözümNet - Tüm Video Çözümlerine Tek Tıkla Ulaşın!</h1>
+        <div class="search-container">
+            <input type="text" id="searchBox" class="search-box" onkeyup="searchPublishers()" placeholder="Yayınevi ara...">
+        </div>
+
+        <div class="container">
+            <a href="" class="button">Hız</a>
+            <a href="" class="button">Okyanus</a>
+            <a href="" class="button">Karekök</a>
+            <a href="" class="button">Final</a>
+            <a href="" class="button">Sınav</a>
+            <a href="" class="button">Bir</a>
+            <a href="" class="button">Doğa</a>
+            <a href="" class="button">Yediiklim</a>
+            <a href="" class="button">Fen Bilimleri</a>
+            <a href="" class="button">Pusula</a>
+            <a href="" class="button">Bilfen</a>
+            <a href="" class="button">Kültür</a>
+            <a href="" class="button">Zeka</a>
+            <a href="" class="button">Efsane</a>
+            <a href="" class="button">Vizyon</a>
+            <a href="" class="button">Akıl Küpü</a>
+            <a href="" class="button">Kampüs</a>
+            <a href="" class="button">Rehber</a>
+            <a href="" class="button">Panorama</a>
+            <a href="" class="button">Marmara</a>
+            <a href="" class="button">Ezgi</a>
+            <a href="" class="button">Köprü</a>
+            <a href="" class="button">Test</a>
+            <a href="" class="button">Beyaz</a>
+            <a href="" class="button">Genç Kalemler</a>
+            <a href="" class="button">Beylikdüzü</a>
+            <a href="" class="button">Hedef</a>
+            <a href="" class="button">Deniz</a>
+            <a href="" class="button">Eğitim Dünyası</a>
+            <a href="" class="button">Altınbaş</a>
+            <a href="" class="button">Eğitim</a>
+            <a href="" class="button">Birsen</a>
+            <a href="" class="button">Sınav Koleji</a>
+            <a href="" class="button">Yaprak</a>
+            <a href="" class="button">Akit</a>
+            <a href="" class="button">Para</a>
+        </div>
     </div>
 </body>
 </html>
